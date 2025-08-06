@@ -6,62 +6,223 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= content_for?(:title) ? yield(:title) : "Photoapp" %></title>
     <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <!-- Stripe publishable key -->
+    <meta name="stripe-publishable-key" content="<%= Rails.application.credentials.stripe&.dig(:publishable_key) %>">
 
-    <%= stylesheet_link_tag "application", :media => "all" %>
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Google Fonts - Rails Guide inspired -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-   
+    <%= javascript_importmap_tags %>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <!-- Custom payment handling with Stripe Elements -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Only initialize on registration page
+        if (document.getElementById('new_user')) {
+          // Get the publishable key from the meta tag
+          const publishableKey = document.querySelector('meta[name="stripe-publishable-key"]')?.getAttribute('content');
+          
+          if (!publishableKey) {
+            console.error('Stripe publishable key not found. Please check your configuration.');
+            return;
+          }
+          
+          // Initialize Stripe
+          const stripe = Stripe(publishableKey);
+          const elements = stripe.elements();
 
-    <%= javascript_include_tag "application" %>
+          // Create card element with styling
+          const cardElement = elements.create('card', {
+            style: {
+              base: {
+                fontSize: '16px',
+                color: '#424770',
+                '::placeholder': {
+                  color: '#aab7c4',
+                },
+              },
+              invalid: {
+                color: '#9e2146',
+              },
+            },
+          });
+
+          // Mount the card element
+          cardElement.mount('#card-element');
+
+          // Handle real-time validation errors from the card Element
+          cardElement.on('change', function(event) {
+            const displayError = document.getElementById('card-errors');
+            if (event.error) {
+              displayError.textContent = event.error.message;
+              displayError.classList.remove('d-none');
+            } else {
+              displayError.textContent = '';
+              displayError.classList.add('d-none');
+            }
+          });
+
+          // Handle form submission
+          const form = document.getElementById('new_user');
+          form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const submitButton = form.querySelector('input[type="submit"]');
+            const errorElement = document.getElementById('card-errors');
+            
+            // Disable submit button
+            submitButton.disabled = true;
+            submitButton.value = 'Processing...';
+            
+            // Clear previous errors
+            errorElement.classList.add('d-none');
+            errorElement.textContent = '';
+
+            const {paymentMethod, error} = await stripe.createPaymentMethod({
+              type: 'card',
+              card: cardElement,
+              billing_details: {
+                email: document.getElementById('user_email').value,
+              },
+            });
+
+            if (error) {
+              // Show error to customer
+              errorElement.textContent = error.message;
+              errorElement.classList.remove('d-none');
+              
+              // Re-enable submit button
+              submitButton.disabled = false;
+              submitButton.value = 'Create Account';
+            } else {
+              // Submit the form with the payment method ID
+              stripePaymentMethodHandler(paymentMethod.id);
+            }
+          });
+
+          // Submit the form with the payment method ID
+          function stripePaymentMethodHandler(paymentMethodId) {
+            const form = document.getElementById('new_user');
+            const hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'payment_method_id');
+            hiddenInput.setAttribute('value', paymentMethodId);
+            form.appendChild(hiddenInput);
+
+            // Submit the form
+            form.submit();
+          }
+        }
+      });
+    </script>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js" type="text/javascript"></script>
     <![endif]-->
   </head>
-  <body>
-
-    <div class="navbar navbar-default navbar-static-top">
+  <body class="rails-inspired">
+    <!-- Rails-inspired Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-rails-red">
       <div class="container">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+        <%= link_to root_path, class: "navbar-brand d-flex align-items-center" do %>
+          <i class="fas fa-camera-retro me-2"></i>
+          <span class="fw-bold">PhotoShare</span>
+        <% end %>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">Photoapp</a>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-          <ul class="nav navbar-nav">
-            <li><%= link_to "Link1", "/path1"  %></li>
-            <li><%= link_to "Link2", "/path2"  %></li>
-            <li><%= link_to "Link3", "/path3"  %></li>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <% if user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to images_path, class: "nav-link d-flex align-items-center" do %>
+                  <i class="fas fa-images me-1"></i>
+                  My Photos
+                <% end %>
+              </li>
+              <li class="nav-item">
+                <%= link_to new_image_path, class: "nav-link d-flex align-items-center" do %>
+                  <i class="fas fa-plus me-1"></i>
+                  Upload Photo
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+          
+          <ul class="navbar-nav">
+            <% if user_signed_in? %>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="fas fa-user-circle me-1"></i>
+                  <%= truncate(current_user.email, length: 20) %>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><%= link_to "Profile", edit_user_registration_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Logout", destroy_user_session_path, method: :delete, class: "dropdown-item" %></li>
+                </ul>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Login", new_user_session_path, class: "nav-link" %>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Sign Up", new_user_registration_path, class: "btn btn-outline-light btn-sm ms-2" %>
+              </li>
+            <% end %>
           </ul>
         </div>
       </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <div class="main-content">
+      <!-- Flash Messages -->
+      <% flash.each do |type, message| %>
+        <div class="alert alert-<%= type == 'notice' ? 'success' : (type == 'alert' ? 'danger' : 'info') %> alert-dismissible fade show mx-3" role="alert">
+          <i class="fas fa-<%= type == 'notice' ? 'check-circle' : 'exclamation-triangle' %> me-2"></i>
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+
+      <div class="container-fluid px-4 py-4">
+        <%= yield %>
+      </div>
     </div>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-9">
-          <%= bootstrap_flash %>
-          <%= yield %>
+    <!-- Rails-inspired Footer -->
+    <footer class="footer bg-dark text-light mt-auto py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="mb-3">PhotoShare</h6>
+            <p class="text-muted mb-0">A Rails-powered photo sharing application.</p>
+          </div>
+          <div class="col-md-6 text-md-end">
+            <p class="text-muted mb-0">
+              &copy; <%= Date.current.year %> PhotoShare. 
+              Built with <i class="fas fa-heart text-danger"></i> and Rails.
+            </p>
+          </div>
         </div>
-        <div class="col-lg-3">
-          <div class="well sidebar-nav">
-            <h3>Sidebar</h3>
-            <ul class="nav nav-list">
-              <li class="nav-header">Sidebar</li>
-              <li><%= link_to "Link1", "/path1"  %></li>
-              <li><%= link_to "Link2", "/path2"  %></li>
-              <li><%= link_to "Link3", "/path3"  %></li>
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-      </div><!--/row-->
-
-      <footer>
-        <p>&copy; Company 2025</p>
-      </footer>
-
-    </div> <!-- /container -->
+      </div>
+    </footer>
 
   </body>
 </html>

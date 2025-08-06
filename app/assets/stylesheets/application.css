@@ -1,10 +1,414 @@
 /*
- * This is a manifest file that'll be compiled into application.css.
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
  *
- * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
- * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
- * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
+ * Any CSS (and SCSS, if configured) file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
  *
- * Consider organizing styles into separate files for maintainability.
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS
+ * files in this directory. Styles in this file follow the same ordering precedence as the cascade.
+ *
+ *= require_tree .
+ *= require_self
  */
+
+/* Rails-inspired PhotoShare Styles */
+
+:root {
+  --rails-red: #cc0000;
+  --rails-red-dark: #a00000;
+  --rails-red-light: #ff3333;
+  --rails-gray: #666666;
+  --rails-light-gray: #f8f9fa;
+  --rails-border: #dee2e6;
+  --shadow-soft: 0 2px 10px rgba(0,0,0,0.08);
+  --shadow-medium: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #fafbfc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.rails-inspired {
+  line-height: 1.6;
+  color: #333;
+}
+
+/* Navigation Styles */
+.bg-rails-red {
+  background: linear-gradient(135deg, var(--rails-red) 0%, var(--rails-red-dark) 100%) !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255,255,255,0.9) !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  background: linear-gradient(180deg, #fafbfc 0%, #f1f3f4 100%);
+}
+
+/* Card Styles */
+.photo-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: none;
+}
+
+.photo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+}
+
+.photo-card .card-img-top {
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+/* Button Styles */
+.btn-rails {
+  background: linear-gradient(135deg, var(--rails-red) 0%, var(--rails-red-dark) 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-rails:hover {
+  background: linear-gradient(135deg, var(--rails-red-dark) 0%, var(--rails-red) 100%);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-rails-outline {
+  background: transparent;
+  border: 2px solid var(--rails-red);
+  color: var(--rails-red);
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-rails-outline:hover {
+  background: var(--rails-red);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Form Styles */
+.form-control {
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--rails-red);
+  box-shadow: 0 0 0 0.2rem rgba(204, 0, 0, 0.15);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+/* Page Headers */
+.page-header {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-soft);
+  border-left: 4px solid var(--rails-red);
+}
+
+.page-header h1 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.page-header .subtitle {
+  color: var(--rails-gray);
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-soft);
+}
+
+.empty-state .empty-icon {
+  font-size: 4rem;
+  color: #dee2e6;
+  margin-bottom: 1.5rem;
+}
+
+.empty-state h3 {
+  color: #6c757d;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: #868e96;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+/* Footer */
+.footer {
+  margin-top: auto;
+  background: #2c3e50 !important;
+}
+
+/* Responsive Grid */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+/* Upload Styles */
+.upload-area {
+  border: 3px dashed #dee2e6;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: var(--rails-red);
+  background: #fff;
+}
+
+.upload-area.dragover {
+  border-color: var(--rails-red);
+  background: rgba(204, 0, 0, 0.05);
+}
+
+/* Image Details */
+.image-detail {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.image-detail img {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.image-meta {
+  padding: 1.5rem;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .page-header {
+    padding: 1.5rem;
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+  }
+}
+
+/* Alert Styles */
+.alert {
+  border-radius: 8px;
+  border: none;
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  color: #155724;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  color: #721c24;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--rails-red);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--rails-red-dark);
+}
+
+.user-name {
+  padding: 0 !important;
+  padding-left: 5px;
+  padding-top: 15px !important;
+  text-align: center;
+}
+
+.user-name a {
+  color: black !important;
+  margin: 0 !important;
+  padding: 5px !important;
+}
+
+.user-name a:hover, .user-name a:focus {
+  color: #000 !important;
+}
+
+.logout {
+  padding-left: 0;
+}
+
+.nav.navbar-right {
+  padding-bottom: 10px;
+  padding-top: 5px;
+}
+
+.nav.navbar-nav .navbar-link {
+  border-radius: 5px;
+  color: #fff;
+  margin-top: 15px;
+  padding: 8px;
+}
+
+.nav.navbar-nav .navbar-link:focus, 
+.nav.navbar-nav .navbar-link:hover {
+  background: #3071a9;
+  color: #fff;
+}
+
+.nav.navbar-nav li a {
+  margin-right: 5px;
+}
+
+.nav.navbar-right li .btn {
+  color: #fff !important;
+  margin-top: 5%;
+}
+
+.nav.navbar-right li .btn-danger:hover, 
+.nav.navbar-right li .btn-danger:focus {
+  background-color: #a94442 !important;
+}
+
+.nav.navbar-right li .btn-primary:hover, 
+.nav.navbar-right li .btn-primary:focus {
+  background-color: #2e6da4 !important;
+}
+
+.btn-primary:visited, .btn-danger:visited {
+  color: #fff;
+}
+
+.features ul {
+  margin-left: 0;
+  padding-left: 15px;
+}
+
+.jumbotron {
+  text-align: center;
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  font-family: 'Helvetica Neue' !important;
+  font-stretch: expanded;
+  padding-top: 25px;
+  padding-bottom: 25px;
+  margin-left: 15px;
+  margin-right: 15px;
+  text-shadow: -1px 0 #555, 0 1px #555, 1px 0 #555, 0 -1px #555;
+}
+
+.no-left-padding {
+  padding-left: 0 !important;
+}
+
+.listing {
+  list-style: none;
+  padding-left: 0;
+}

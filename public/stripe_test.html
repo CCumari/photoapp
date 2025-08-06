@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stripe Test</title>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+  <h1>Stripe Test</h1>
+  <script>
+    console.log('Stripe object:', typeof Stripe);
+    console.log('Stripe version:', Stripe.version);
+    
+    // Test if we can initialize Stripe
+    try {
+      const stripe = Stripe('pk_test_51HsomeTestKey');
+      console.log('Stripe initialized successfully');
+    } catch (error) {
+      console.error('Stripe initialization failed:', error);
+    }
+  </script>
+</body>
+</html>

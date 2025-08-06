@@ -17,12 +17,22 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
+gem "cssbundling-rails"
 
 gem "devise"
+gem 'stripe'
 
-gem "twitter-bootstrap-rails"
+gem 'carrierwave'
 
-gem "devise-bootstrap-views"
+gem 'mini_magick'
+
+#gem 'fog'
+
+# Environment variables
+gem 'dotenv-rails', groups: [:development, :test]
+
+# Postmark for email delivery
+gem "postmark-rails"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"

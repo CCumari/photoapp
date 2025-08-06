@@ -1,0 +1,131 @@
+<%= form_with(model: image, local: true, multipart: true, class: "needs-validation", novalidate: true) do |form| %>
+  <% if image.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      <strong><%= pluralize(image.errors.count, "error") %> prevented this photo from being saved:</strong>
+      <ul class="mb-0 mt-2">
+        <% image.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <%= form.label :name, class: "form-label" do %>
+      <i class="fas fa-tag me-2"></i>Photo Title
+    <% end %>
+    <%= form.text_field :name, 
+        class: "form-control #{'is-invalid' if image.errors[:name].any?}", 
+        placeholder: "Give your photo a memorable title...",
+        required: true %>
+    <% if image.errors[:name].any? %>
+      <div class="invalid-feedback">
+        <%= image.errors[:name].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mb-4">
+    <%= form.label :picture, "Photo Upload", class: "form-label" do %>
+      <i class="fas fa-image me-2"></i>Choose Photo
+    <% end %>
+    
+    <div class="upload-area" onclick="document.getElementById('image_picture').click();">
+      <div id="upload-preview" style="display: none;">
+        <img id="preview-image" src="" alt="Preview" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px;">
+        <p class="mt-2 mb-0"><strong>Photo Selected</strong></p>
+        <small class="text-muted">Click to change or drag a new file</small>
+      </div>
+      
+      <div id="upload-placeholder">
+        <i class="fas fa-cloud-upload-alt text-muted mb-3" style="font-size: 3rem;"></i>
+        <h5 class="text-muted">Drop your photo here</h5>
+        <p class="text-muted mb-3">or click to browse your files</p>
+        <div class="btn-rails-outline">
+          <i class="fas fa-folder-open me-2"></i>
+          Choose File
+        </div>
+      </div>
+    </div>
+    
+    <%= form.file_field :picture, 
+        class: "form-control d-none #{'is-invalid' if image.errors[:picture].any?}", 
+        accept: "image/*",
+        required: image.new_record?,
+        id: "image_picture" %>
+    
+    <% if image.errors[:picture].any? %>
+      <div class="invalid-feedback d-block">
+        <%= image.errors[:picture].first %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="d-grid">
+    <%= form.submit class: "btn-rails", style: "padding: 12px 0; font-size: 1.1rem;" do %>
+      <i class="fas fa-<%= image.new_record? ? 'upload' : 'save' %> me-2"></i>
+      <%= image.new_record? ? 'Upload Photo' : 'Update Photo' %>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const fileInput = document.getElementById('image_picture');
+  const uploadArea = document.querySelector('.upload-area');
+  const uploadPreview = document.getElementById('upload-preview');
+  const uploadPlaceholder = document.getElementById('upload-placeholder');
+  const previewImage = document.getElementById('preview-image');
+
+  // File input change handler
+  fileInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      displayPreview(file);
+    }
+  });
+
+  // Drag and drop handlers
+  uploadArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+  });
+
+  uploadArea.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+  });
+
+  uploadArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        fileInput.files = files;
+        displayPreview(file);
+      }
+    }
+  });
+
+  function displayPreview(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImage.src = e.target.result;
+      uploadPlaceholder.style.display = 'none';
+      uploadPreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // If editing existing image, show current image
+  <% if image.picture.present? %>
+    previewImage.src = '<%= image.picture.url %>';
+    uploadPlaceholder.style.display = 'none';
+    uploadPreview.style.display = 'block';
+  <% end %>
+});
+</script>

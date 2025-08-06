@@ -32,13 +32,23 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
 
   # Set localhost to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+
+  # Email configuration for development
+  config.action_mailer.delivery_method = :postmark
+  config.action_mailer.postmark_settings = {
+    api_token: '971af3e6-427f-4ed0-a90f-5ac71b9886d0'
+  }
+  
+  # For testing without actual emails, you can use:
+  # config.action_mailer.delivery_method = :test
+  # config.action_mailer.perform_deliveries = false
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

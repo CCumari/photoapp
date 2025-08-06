@@ -1,2 +1,208 @@
-<h1>Welcome to Photo App</h1>
-<p>Find me in app/views/welcome/index.html.erb</p>
+<% content_for :title, "Welcome to PhotoShare" %>
+
+<% if current_user %>
+  <!-- Logged in user dashboard -->
+  <div class="page-header fade-in-up">
+    <h1><i class="fas fa-home me-3"></i>Welcome back, <%= current_user.email.split('@').first.capitalize %>!</h1>
+    <p class="subtitle">Ready to share some amazing photos today?</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Quick Stats -->
+    <div class="col-md-4">
+      <div class="photo-card text-center">
+        <div class="card-body p-4">
+          <i class="fas fa-images text-rails mb-3" style="font-size: 3rem;"></i>
+          <h3><%= current_user.images.count %></h3>
+          <p class="text-muted mb-3">Photos Uploaded</p>
+          <%= link_to images_path, class: "btn-rails-outline w-100" do %>
+            <i class="fas fa-eye me-2"></i>
+            View All Photos
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Action -->
+    <div class="col-md-4">
+      <div class="photo-card text-center">
+        <div class="card-body p-4">
+          <i class="fas fa-cloud-upload-alt text-success mb-3" style="font-size: 3rem;"></i>
+          <h5>Upload New Photo</h5>
+          <p class="text-muted mb-3">Share your latest capture</p>
+          <%= link_to new_image_path, class: "btn-rails w-100" do %>
+            <i class="fas fa-plus me-2"></i>
+            Upload Photo
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-md-4">
+      <div class="photo-card text-center">
+        <div class="card-body p-4">
+          <i class="fas fa-clock text-info mb-3" style="font-size: 3rem;"></i>
+          <h5>Recent Activity</h5>
+          <% if current_user.images.any? %>
+            <p class="text-muted mb-3">Last upload: <%= time_ago_in_words(current_user.images.last.created_at) %> ago</p>
+            <%= link_to image_path(current_user.images.last), class: "btn-rails-outline w-100" do %>
+              <i class="fas fa-eye me-2"></i>
+              View Latest
+            <% end %>
+          <% else %>
+            <p class="text-muted mb-3">No uploads yet</p>
+            <%= link_to new_image_path, class: "btn-rails-outline w-100" do %>
+              <i class="fas fa-plus me-2"></i>
+              Get Started
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Photos Preview -->
+  <% if current_user.images.any? %>
+    <div class="mt-5">
+      <h4 class="mb-4">
+        <i class="fas fa-star me-2"></i>
+        Your Recent Photos
+      </h4>
+      <div class="row g-3">
+        <% current_user.images.limit(6).order(created_at: :desc).each do |image| %>
+          <div class="col-lg-2 col-md-3 col-4">
+            <%= link_to image_path(image), class: "d-block" do %>
+              <% if image.picture.present? %>
+                <%= image_tag image.picture.thumb.url, 
+                    class: "img-fluid rounded shadow-sm hover-zoom", 
+                    style: "height: 120px; width: 100%; object-fit: cover;",
+                    alt: image.name,
+                    loading: "lazy" %>
+              <% else %>
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 120px;">
+                  <i class="fas fa-image text-muted"></i>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+<% else %>
+  <!-- Landing page for non-logged in users -->
+  <div class="hero-section text-center py-5 fade-in-up">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-4">
+        <i class="fas fa-camera-retro text-rails me-3"></i>
+        Welcome to PhotoShare
+      </h1>
+      <p class="lead mb-5">The elegant way to store, organize, and share your precious memories. Built with the power and simplicity of Rails.</p>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-4">
+      <div class="photo-card text-center h-100">
+        <div class="card-body p-4">
+          <i class="fas fa-shield-alt text-success mb-3" style="font-size: 3rem;"></i>
+          <h5>Secure Storage</h5>
+          <p class="text-muted">Your photos are safely stored with enterprise-grade security and privacy protection.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="photo-card text-center h-100">
+        <div class="card-body p-4">
+          <i class="fas fa-mobile-alt text-primary mb-3" style="font-size: 3rem;"></i>
+          <h5>Responsive Design</h5>
+          <p class="text-muted">Access your photos anywhere, anytime. Our platform works perfectly on all devices.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-4">
+      <div class="photo-card text-center h-100">
+        <div class="card-body p-4">
+          <i class="fas fa-bolt text-warning mb-3" style="font-size: 3rem;"></i>
+          <h5>Lightning Fast</h5>
+          <p class="text-muted">Built on Rails for optimal performance and reliability. Upload and view photos instantly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing Section -->
+  <div class="page-header text-center">
+    <h2><i class="fas fa-gem me-3"></i>Choose Your Plan</h2>
+    <p class="subtitle">Start your photo journey with our premium features</p>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="photo-card">
+        <div class="card-body p-5 text-center">
+          <div class="mb-4">
+            <h3 class="fw-bold">Premium Plan</h3>
+            <div class="display-6 fw-bold text-rails">$10<small class="text-muted fs-6">/month</small></div>
+          </div>
+          
+          <div class="mb-4">
+            <ul class="list-unstyled">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited Photo Uploads</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i>High-Resolution Storage</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Advanced Organization Tools</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority Support</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Export & Backup Options</li>
+            </ul>
+          </div>
+          
+          <%= link_to new_user_registration_path, class: "btn-rails w-100" do %>
+            <i class="fas fa-rocket me-2"></i>
+            Start Your Journey
+          <% end %>
+          
+          <p class="text-muted mt-3 mb-0">
+            <small>
+              <i class="fas fa-lock me-1"></i>
+              Secure payment powered by Stripe
+            </small>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Call to Action -->
+  <div class="text-center mt-5 py-4">
+    <p class="lead">Already have an account?</p>
+    <%= link_to new_user_session_path, class: "btn-rails-outline" do %>
+      <i class="fas fa-sign-in-alt me-2"></i>
+      Sign In
+    <% end %>
+  </div>
+<% end %>
+
+<style>
+  .hover-zoom {
+    transition: transform 0.3s ease;
+  }
+  .hover-zoom:hover {
+    transform: scale(1.05);
+  }
+  
+  .text-rails {
+    color: var(--rails-red) !important;
+  }
+  
+  .hero-section {
+    background: linear-gradient(135deg, #fafbfc 0%, #f1f3f4 100%);
+    border-radius: 12px;
+    margin-bottom: 3rem;
+  }
+</style>
+
