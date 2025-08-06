@@ -169,7 +169,6 @@ GEM
     marcel (1.0.4)
     matrix (0.4.3)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.8.0)
     net-imap (0.5.9)
@@ -319,8 +318,8 @@ GEM
       concurrent-ruby (~> 1.0)
       logger
       rack (>= 2.2.4, < 4)
-    sqlite3 (2.1.1)
-      mini_portile2 (~> 2.8.0)
+    sqlite3 (2.7.3-x64-mingw-ucrt)
+    sqlite3 (2.7.3-x86_64-linux-gnu)
     sshkit (1.24.0)
       base64
       logger
@@ -390,7 +389,7 @@ DEPENDENCIES
   solid_cable
   solid_cache
   solid_queue
-  sqlite3 (~> 2.1.0)
+  sqlite3 (~> 2.7.3)
   stimulus-rails
   thruster
   turbo-rails
